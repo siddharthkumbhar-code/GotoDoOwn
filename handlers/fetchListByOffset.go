@@ -34,8 +34,8 @@ func FetchListByOffsetPagination(w http.ResponseWriter, r *http.Request) {
 		file.FFile.Write([]byte("Limit Must Be Greater Than 0"))
 		return
 	}
-	o, _ := strconv.Atoi(offset)
-	if err != nil {
+	o, err:= strconv.Atoi(offset)
+	if err!= nil {
 		http.Error(w, "Offset must be Valid Integer", 400)
 		file.FFile.Write([]byte(err.Error()))
 		return
