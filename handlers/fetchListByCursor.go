@@ -57,15 +57,12 @@ func FetchListByCursorPagination(w http.ResponseWriter, r *http.Request) {
 		file.FFile.Write([]byte(err.Error()))
 		return
 	}
-
 	var task models.Task
 	tasks := []models.Task{}
-
 	for rows.Next() {
 		rows.Scan(&task.Id, &task.Name, &task.Status)
 		tasks = append(tasks, task)
 	}
-
 	w.Header().Set("Content-type", "application/json")
 	data, err := json.Marshal(tasks)
 	if err!=nil{
