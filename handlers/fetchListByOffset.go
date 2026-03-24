@@ -23,50 +23,61 @@ func FetchListByOffsetPagination(w http.ResponseWriter, r *http.Request) {
 		file.FFile.Write([]byte("Offset is Required"))
 		return
 	}
-	l, err := strconv.Atoi(limit)
+	Limit, err := strconv.Atoi(limit)
 	if err != nil {
 		http.Error(w, "Limit must be Valid Integer", 400)
 		file.FFile.Write([]byte(err.Error()))
 		return
 	}
-	if l<=0{
+	if Limit<=0{
 		http.Error(w,"Limit Must Be Greater Than 0",400)
 		file.FFile.Write([]byte("Limit Must Be Greater Than 0"))
 		return
 	}
-	o, err:= strconv.Atoi(offset)
+	Offset, err:= strconv.Atoi(offset)
 	if err!= nil {
 		http.Error(w, "Offset must be Valid Integer", 400)
 		file.FFile.Write([]byte(err.Error()))
 		return
 	}
-	if o<=0{
+	if Offset<0{
 		http.Error(w,"Offset Must Be Greater Than 0",400)
 		file.FFile.Write([]byte("Offset Must Be Greater Than 0"))
 		return
 	}
 
 	rows, err := db.DDB.Query(`SELECT Id,Name,Status FROM tasks
-			LIMIT ? OFFSET ?`, l, o)
+			LIMIT ? OFFSET ?`, Limit, Offset)
 
 	if err!=nil{
 		http.Error(w,"Internal Server Error",500)
 		file.FFile.Write([]byte(err.Error()))
 		return
 	}
-	
 	tasks := []models.Task{}
-	var task models.Task
 	for rows.Next() {
-		rows.Scan(&task.Id, &task.Name, &task.Status)
+		var task models.Task
+		err:=rows.Scan(&task.Id, &task.Name, &task.Status)
+		if err != nil {
+   		 	http.Error(w,"Internal Server Error",500)
+    	 	return
+	    }
 		tasks = append(tasks, task)
 	}
+	defer rows.Close()
+	nextOffset := Offset + Limit
+
+	response := map[string]interface{}{
+    	"data": tasks,
+    	"next_offset": nextOffset,
+    	"has_more": len(tasks) == Limit,
+	}
 	w.Header().Set("Content-Type", "application/json")
-	data, err := json.Marshal(tasks)
+	responseData, err := json.Marshal(response)
 	if err!=nil{
 		http.Error(w,"Internal Server Error",500)
 		file.FFile.Write([]byte("Internal Server Error"))
 		return
 	}
-	w.Write(data)
+	w.Write(responseData)
 }
