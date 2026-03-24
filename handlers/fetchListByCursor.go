@@ -30,7 +30,7 @@ func FetchListByCursorPagination(w http.ResponseWriter, r *http.Request) {
 		file.FFile.Write([]byte(err.Error()))
 		return
 	}
-	if cursor<=0{
+	if cursor<0{
 		http.Error(w,"Cursor Must Be Greater Than 0",400)
 		file.FFile.Write([]byte("Cursor Must Be Greater Than 0"))
 		return
@@ -65,8 +65,13 @@ func FetchListByCursorPagination(w http.ResponseWriter, r *http.Request) {
 		tasks = append(tasks, task)
 	}
 
-	nextCursor:=cursor+Limit
-
+	var nextCursor int
+	if len(tasks)>0{
+		nextCursor=int(tasks[len(tasks)-1].Id)
+	}else{
+		nextCursor=cursor
+	}
+	
 	response:=map[string]interface{}{
 		"data":tasks,
 		"next_Cursor":nextCursor,
