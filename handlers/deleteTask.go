@@ -34,4 +34,5 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 		file.FFile.Write([]byte("Internal Server Error"))
 		return
 	}
+	w.Write([]byte("Data Deleted Successfully"))
 }

@@ -14,4 +14,3 @@ func main() {
 	RegisterRoutes()
 	http.ListenAndServe(":8080", nil)
 }
-//_ "github.com/mattn/go-sqlite3"
