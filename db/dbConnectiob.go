@@ -20,7 +20,7 @@ func DataBaseConnection() {
 }
 func createTable(DDB *sql.DB) {
 	query := `CREATE TABLE IF NOT EXISTS tasks(
-			Id INTEGER PRIMARY KEY AUTOINCREMENT ,
+			Id INTEGER PRIMARY KEY AUTOINCREMENT,
 			Name TEXT NOT NULL,
 			Status bool NOT NULL);`
 	_, err := DDB.Exec(query)
