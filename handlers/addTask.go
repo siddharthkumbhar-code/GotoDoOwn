@@ -13,6 +13,7 @@ func AddTask(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method!=http.MethodPost{
 		http.Error(w,"Method is Invalid",405)
+		http.Error(w,"Method is Invalid",405)
 		file.FFile.Write([]byte("Invalid Method Type"))
 		return
 	}
