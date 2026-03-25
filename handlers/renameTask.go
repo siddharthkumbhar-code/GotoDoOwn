@@ -29,5 +29,10 @@ func RenameTask(w http.ResponseWriter, r *http.Request) {
 	query := `UPDATE tasks 
 			SET Name=?
 			WHERE id=?`
-	db.DDB.Exec(query, task.Name, iid)
+	_,err=db.DDB.Exec(query, task.Name, iid)
+	if err!=nil{
+		http.Error(w,"INternal Server Error",500)
+		return
+	}
+	w.Write([]byte("Rename Successfully Done"))
 }
